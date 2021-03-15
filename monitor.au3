@@ -10,19 +10,19 @@
 
 HotKeySet("{ESC}", "_Exit1")
 
-$Form1 = GUICreate("Í£µç¼à¿Ø", 380, 90, 265, 254)
+$Form1 = GUICreate("PowerMonitor", 380, 90, 265, 254)
 $lb1 = GUICtrlCreateLabel("Label2", 8, 8, 280, 45)
-$lb2 = GUICtrlCreateLabel("°´ESC" & " / " & "ÖÕÖ¹¹Ø»ú", 280, 5, 100, 45)
+$lb2 = GUICtrlCreateLabel("Press ESC quit" & " / " & "Stop Monitor", 280, 5, 100, 45)
 $pgs1 = GUICtrlCreateProgress(8, 58, 364, 25)
 
 ;GUICtrlSetBkColor($lb1,0x008000)
-GUICtrlSetFont($lb1, 22, 400, 0, "Î¢ÈíÑÅºÚ")
+;GUICtrlSetFont($lb1, 22, 400, 0, "å¾®è½¯é›…é»‘")
 GUICtrlSetColor($lb1, 0x008000)
-GUICtrlSetFont($lb2, 14, 400, 0, "Î¢ÈíÑÅºÚ")
+;GUICtrlSetFont($lb2, 14, 400, 0, "å¾®è½¯é›…é»‘")
 GUICtrlSetLimit($pgs1, 10, 0)
-GUISetState(@SW_SHOW) ;@SW_SHOWÏÔÊ¾Ö÷´°¿Ú£¬@SW_HIDE ²»ÏÔÊ¾ Òş²Ø
-TrayTip("ÕıÔÚÔËĞĞ","¶Ïµç¼à¿Ø",0,$TIP_ICONASTERISK)
-;while 1 »á×èÖ¹ºóÃæµÄwhile Ö´ĞĞ
+GUISetState(@SW_SHOW) 
+TrayTip("Monitoring","Power moniter",0,$TIP_ICONASTERISK)
+
 monitor()
 
 Func monitor()
@@ -33,14 +33,14 @@ Func monitor()
 		If isConnect1() Then
 			$i =  0
 			GUISetState(@SW_HIDE) ;hide GUI
-			GUICtrlSetData($lb1,"ÔËĞĞÕı³£" )
-			GUICtrlSetColor($lb1, 0x008000);ÂÌÉ«
+			GUICtrlSetData($lb1,"Normal" )
+			GUICtrlSetColor($lb1, 0x008000);green/ç»¿è‰²
 			GUICtrlSetData($pgs1, 0)
 		Else
 		   $i = $i + 1
 		   GUISetState(@SW_SHOW) ;show GUI
-		   GUICtrlSetData($lb1,"¶Ïµç! ¹Ø»úÖĞ "& ($cd-$i) &"Ãë" )
-		   GUICtrlSetColor($lb1, 0xFF0000);ºìÉ«
+		   GUICtrlSetData($lb1,"Shutting Down in "& ($cd-$i) &"sec" )
+		   GUICtrlSetColor($lb1, 0xFF0000);red/çº¢è‰²
 		   GUICtrlSetData($pgs1, $i/$cd*100)
 		   ;Beep(500, 1000)
 		   _active()
@@ -57,13 +57,13 @@ Func _Exit1()
 EndFunc
 
 Func _active()
-   $title = WinGetTitle("¶Ïµç¹Ø»ú³ÌĞò")
+   $title = WinGetTitle("Power Monitor")
    WinSetOnTop($title, "", 1)
    ;one of the above actions
    WinActivate($title)
 EndFunc
 
-;ÎŞÁ¬½Ó²Å±¨
+;check internet connection / æ— è¿æ¥æ‰æŠ¥
 Func isConnect1()
    Local Const $NETWORK_ALIVE_LAN = 0x1 ;net card connection
    Local Const $NETWORK_ALIVE_WAN = 0x2 ;RAS (internet) connection
@@ -80,7 +80,7 @@ Func isConnect1()
    Return $iResult
 EndFunc
 
-;ÓĞÁ¬½Óµ«ÎŞÍøÊ±Ò²true
+;net cable is connect&powered but internet is not, also true / æœ‰è¿æ¥ä½†æ— ç½‘æ—¶ä¹Ÿtrue
 Func isConnect2()
    Local $aReturn = DllCall('connect.dll', 'long', 'IsInternetConnected')
    If @error Then
@@ -90,7 +90,7 @@ Func isConnect2()
    Return $aReturn[0]
 EndFunc
 
-;Á¬Â·ÓÉ Ã»ÓĞÍøÒ²ÊÇtrue
+;rounter is powered, without internet also true / è¿è·¯ç”± æ²¡æœ‰ç½‘ä¹Ÿæ˜¯true
 Func isConnect3()
    $INTERNET_CONNECTION_MODEM          = 0x1
    $INTERNET_CONNECTION_LAN            = 0x2
